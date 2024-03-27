@@ -34,7 +34,7 @@ pipeline {
                 }
             }
 
-    }
+        }
 
 
         stage('Deploy application') {
@@ -63,6 +63,6 @@ pipeline {
        sh "docker-compose down"
        cleanWs()
      }
-
+  }
 }
 
