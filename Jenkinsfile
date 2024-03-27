@@ -17,6 +17,12 @@ pipeline {
     agent {
         label 'agent'
     }
+
+    environment {
+      PIP_BREAK_SYSTEM_PACKAGES = 1
+    }
+
+
     stages {
         stage('Checkout from GITHUB') {
             steps {
@@ -37,6 +43,13 @@ pipeline {
         }
 
 
+       stage('cleanup') {
+          steps{
+            sh "docker rm -f frontend backend"
+         }
+       }
+  
+
         stage('Deploy application') {
             steps {
                 script {
@@ -50,13 +63,15 @@ pipeline {
             }
         }
 
-
-    stage('cleanup') {
-       steps{
-          sh "docker rm -f frontend backend"
+       stage('Run selenium'){
+         steps {
+           sh "pip3 install -r test/selenium/requirements"
+           sh "python3 -m pytest test/selenium/frontendTest.py"
+         }
        }
-    }
-   }
+
+
+  }
 
    post {
      always {
