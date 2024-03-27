@@ -10,8 +10,8 @@ def frontendDockerTag=""
 pipeline {
 
     parameters {
-	
-
+        string(name: 'backendDockerTag', defaultValue: '', description: 'Backend docker image tag')
+        string(name: 'frontendDockerTag', defaultValue: '', description: 'Frontend docker image tag')
     }
 
     agent {
@@ -36,5 +36,5 @@ pipeline {
 
     }
 }
-
+}
 
