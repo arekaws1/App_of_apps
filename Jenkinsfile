@@ -64,6 +64,7 @@ pipeline {
         }
 
        stage('Run selenium'){
+
          steps {
            sh "pip3 install -r test/selenium/requirements"
            sh "python3 -m pytest test/selenium/frontendTest.py"
