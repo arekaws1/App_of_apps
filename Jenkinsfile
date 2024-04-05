@@ -23,6 +23,10 @@ pipeline {
     }
 
 
+    {
+      terraform 'Terraform'
+    }
+
     stages {
         stage('Checkout from GITHUB') {
             steps {
@@ -72,6 +76,31 @@ pipeline {
        }
 
 
+       stage('Run terraform') {
+            steps {
+                dir('Terraform') {                
+                    git branch: 'main', url: 'https://github.com/arekaws1/Terraform'
+                    withAWS(credentials:'AWS', region: 'us-east-1') {
+                            sh 'terraform init -backend-config=bucket=arkadiusz-bigos-panda-devops-core-17'
+                            sh 'terraform apply -auto-approve -var bucket_name=arkadiusz-bigos-panda-devops-core-17'
+                            
+                    } 
+                }
+            }
+       }
+
+       stage('Run Ansible') {
+               steps {
+                   script {
+                        sh "pip3 install -r requirements.txt"
+                        sh "ansible-galaxy install -r requirements.yml"
+                        withEnv(["FRONTEND_IMAGE=$frontendImage:$frontendDockerTag", 
+                                 "BACKEND_IMAGE=$backendImage:$backendDockerTag"]) {
+                            ansiblePlaybook inventory: 'inventory', playbook: 'playbook.yml'
+                        }
+                }
+            }
+       }
   }
 
    post {
