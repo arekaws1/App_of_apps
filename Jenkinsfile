@@ -23,7 +23,7 @@ pipeline {
     }
 
 
-    {
+    tools {
       terraform 'Terraform'
     }
 
